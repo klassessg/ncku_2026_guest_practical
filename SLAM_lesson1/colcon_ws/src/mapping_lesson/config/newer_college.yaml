@@ -1,0 +1,105 @@
+/**:
+  ros__parameters:
+    
+    # Topics
+    pointCloudTopic: "/os_cloud_node/points"               # Point cloud data
+    imuTopic: "/os_cloud_node/imu"                         # IMU data
+    odomTopic: "odometry/imu"                   # IMU pre-preintegration odometry, same frequency as IMU
+    gpsTopic: "gps_odom"                   # GPS odometry topic from navsat, see module_navsat.launch file
+
+    # Frames
+    lidarFrame: "os_sensor"
+    baselinkFrame: "base_link"
+    odometryFrame: "odom"
+    mapFrame: "map"
+
+    # GPS Settings
+    useImuHeadingInitialization: false           # if using GPS data, set to "true"
+    useGpsElevation: false                       # if GPS elevation is bad, set to "false"
+    gpsCovThreshold: 2.0                         # m^2, threshold for using GPS data
+    poseCovThreshold: 25.0                       # m^2, threshold for using GPS data
+
+    # Export settings
+    savePCD: false                               # https://github.com/TixiaoShan/LIO-SAM/issues/3
+    savePCDDirectory: "/Downloads/LOAM/"         # in your home folder, starts and ends with "/". Warning: the code deletes "LOAM" folder then recreates it. See "mapOptimization" for implementation
+
+    # Sensor Settings
+    sensor: ouster                               # lidar sensor type, either 'velodyne', 'ouster' or 'livox'
+    N_SCAN: 128                                   # number of lidar channels (i.e., Velodyne/Ouster: 16, 32, 64, 128, Livox Horizon: 6)
+    Horizon_SCAN: 1024                            # lidar horizontal resolution (Velodyne:1800, Ouster:512,1024,2048, Livox Horizon: 4000)
+    downsampleRate: 2                            # 128-ch Ouster: drop every other ring for real-time bag playback
+    # points. i.e., 16 = 64 / 4, 16 = 16 / 1
+    lidarMinRange: 1.0                           # default: 1.0, minimum lidar range to be used
+    lidarMaxRange: 1000.0                        # default: 1000.0, maximum lidar range to be used
+
+    # IMU Settings
+    # Rest on kno_rosbag_300s_ouster: converted acc ~ [-0.25, -0.05, 9.92] => Ba_z ~ 0.11.
+    # Bias walk high enough to reach that, low enough to avoid |b|>1 resets while walking.
+    imuType: 0                                   # 0 = 6-axis (no magnetometer), 1 = 9-axis
+    imuAccNoise: 0.1
+    imuGyrNoise: 0.1
+    imuAccBiasN: 0.01
+    imuGyrBiasN: 0.01
+    imuPriorBiasNoise: 1.0e-3                    # prior on B(0) at init and graph reset
+    imuInitialBias: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  # ax, ay, az, gx, gy, gz
+    imuGravity: 9.80511
+    imuRPYWeight: 0.01
+
+    adaptiveImuEnabled: true
+    adaptiveImuVarianceWindowSize: 15
+    adaptiveImuBaselineAlpha: 0.01
+    adaptiveImuBaselineOutlierRatio: 4.0
+    adaptiveImuMinimumWeight: 0.05
+
+    # Lidar (os_sensor) to Ouster IMU. See newer_college.urdf.xacro.
+    imu_type: 0   # 0: 6axis, 1:9 axis
+    extrinsicTrans: [ 0.014, -0.012, -0.015 ]
+    extrinsicRot: [1.0, 0.0, 0.0,
+                    0.0, 1.0, 0.0,
+                    0.0, 0.0, 1.0]
+    extrinsicRPY: [1.0, 0.0, 0.0,
+                   0.0, 1.0, 0.0,
+                   0.0, 0.0, 1.0]
+
+    # LOAM feature threshold
+    edgeThreshold: 1.0
+    surfThreshold: 0.1
+    edgeFeatureMinValidNum: 10
+    surfFeatureMinValidNum: 100
+
+    # voxel filter paprams
+    odometrySurfLeafSize: 0.4                     # default: 0.4 - outdoor, 0.2 - indoor
+    mappingCornerLeafSize: 0.2                    # default: 0.2 - outdoor, 0.1 - indoor
+    mappingSurfLeafSize: 0.4                      # default: 0.4 - outdoor, 0.2 - indoor
+
+    # robot motion constraint (in case you are using a 2D robot)
+    z_tollerance: 2.0                          # meters; allow walk bounce, still cap map blow-up
+    rotation_tollerance: 1000.0                   # radians
+
+    # CPU Params
+    numberOfCores: 4                              # number of cores for mapping optimization
+    mappingProcessInterval: 0.10                  # seconds; more frequent IMU-graph updates
+
+    # Surrounding map
+    surroundingkeyframeAddingDistThreshold: 1.0   # meters, regulate keyframe adding threshold
+    surroundingkeyframeAddingAngleThreshold: 0.2  # radians, regulate keyframe adding threshold
+    surroundingKeyframeDensity: 2.0               # meters, downsample surrounding keyframe poses   
+    surroundingKeyframeSearchRadius: 50.0         # meters, within n meters scan-to-map optimization
+    # (when loop closure disabled)
+
+    # Loop closure
+    loopClosureEnableFlag: true
+    loopClosureFrequency: 1.0                     # Hz, regulate loop closure constraint add frequency
+    surroundingKeyframeSize: 50                   # submap size (when loop closure enabled)
+    historyKeyframeSearchRadius: 15.0             # meters, key frame that is within n meters from
+    # current pose will be considerd for loop closure
+    historyKeyframeSearchTimeDiff: 30.0           # seconds, key frame that is n seconds older will be
+    # considered for loop closure
+    historyKeyframeSearchNum: 25                  # number of hostory key frames will be fused into a
+    # submap for loop closure
+    historyKeyframeFitnessScore: 0.3              # icp threshold, the smaller the better alignment
+
+    # Visualization
+    globalMapVisualizationSearchRadius: 1000.0    # meters, global map visualization radius
+    globalMapVisualizationPoseDensity: 10.0       # meters, global map visualization keyframe density
+    globalMapVisualizationLeafSize: 1.0           # meters, global map visualization cloud density

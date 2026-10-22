@@ -1,0 +1,12 @@
+# prototyping code for on machine analysis
+.analysis_code
+
+# Vscode configurations
+.vscode/
+*.code-workspace
+
+# Build artifacts
+__pycache__/
+colcon_ws/src/.tmp/*
+maps/rtabmap.db
+maps/icp_debug/

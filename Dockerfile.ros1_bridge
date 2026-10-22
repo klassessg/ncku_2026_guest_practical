@@ -1,0 +1,115 @@
+# syntax=docker/dockerfile:1
+
+# ROS 1 Noetic has no Ubuntu 24.04 packages, while ROS 2 Jazzy targets 24.04.
+# This builds the minimum useful Noetic stack from source, then compile ros1_bridge
+# against both installations. This is an unsupported (but practical) pairing;
+# see https://github.com/ros2/ros1_bridge#supported-ros-and-ubuntu-versions.
+
+FROM ros:jazzy-ros-base AS bridge
+
+ARG DEBIAN_FRONTEND=noninteractive
+ARG BUILD_JOBS=2
+ARG ROS1_PACKAGES="ros_comm common_msgs tf2_msgs"
+ARG ROS1_BRIDGE_REF=master
+
+ENV LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8 \
+    TZ=Etc/UTC \
+    ROS1_DISTRO=noetic \
+    ROS2_DISTRO=jazzy \
+    ROS_MASTER_URI=http://127.0.0.1:11311 \
+    RMW_IMPLEMENTATION=rmw_zenoh_cpp
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        cmake \
+        git \
+        python3-catkin-pkg \
+        python3-nose \
+        python3-pip \
+        python3-rosdep \
+        python3-vcstool \
+        ros-jazzy-rmw-zenoh-cpp \
+    && rm -rf /var/lib/apt/lists/* \
+    && pip3 install --no-cache-dir --break-system-packages \
+        'empy==3.3.4' \
+        rosinstall \
+        rosinstall-generator
+
+RUN rosdep init 2>/dev/null || true \
+    && rosdep update
+
+WORKDIR /noetic_ws
+RUN rosinstall_generator ${ROS1_PACKAGES} \
+        --rosdistro noetic \
+        --deps \
+        --tar \
+        > noetic.rosinstall \
+    && mkdir -p src \
+    && vcs import --input noetic.rosinstall src
+
+RUN apt-get update \
+    && rosdep install \
+        --from-paths src \
+        --ignore-src \
+        --rosdistro noetic \
+        --skip-keys "python3-catkin-pkg-modules python3-rosdep-modules python3-rosdistro-modules" \
+        -r -y \
+    && rm -rf /var/lib/apt/lists/*
+
+# Unset the ROS 2 distro inherited from the base image while catkin configures
+# Noetic. The print backend avoids Noetic's old log4cxx API on Ubuntu 24.04.
+RUN env -u ROS_DISTRO ./src/catkin/bin/catkin_make_isolated \
+        --install \
+        --install-space /opt/ros/noetic \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCATKIN_ENABLE_TESTING=OFF \
+        --cmake-args -DROSCONSOLE_BACKEND=print \
+        --make-args -j${BUILD_JOBS} -l${BUILD_JOBS}
+
+# ros1_bridge must be compiled in an environment containing both sets of
+# message definitions. Source ROS 1 first and ROS 2 second, as upstream
+# requires, so ROS 2 packages take precedence in CMAKE_PREFIX_PATH.
+WORKDIR /bridge_ws
+RUN mkdir -p src \
+    && git clone --branch "${ROS1_BRIDGE_REF}" --depth 1 \
+        https://github.com/ros2/ros1_bridge.git src/ros1_bridge
+
+RUN bash -c 'set -e; \
+        source /opt/ros/noetic/setup.bash; \
+        source /opt/ros/jazzy/setup.bash; \
+        export MAKEFLAGS="-j'"${BUILD_JOBS}"' -l'"${BUILD_JOBS}"'"; \
+        colcon build \
+            --merge-install \
+            --packages-select ros1_bridge \
+            --cmake-force-configure \
+            --cmake-args -DCMAKE_BUILD_TYPE=Release'
+
+# Keep this Dockerfile self-contained. ROS 1 Python tools cannot share a
+# PYTHONPATH with Jazzy because both distributions provide modules such as
+# rosgraph_msgs. Run common ROS 1 commands in a Noetic-only environment; load
+# both distributions for ros1_bridge and arbitrary ROS 2 commands.
+RUN printf '%s\n' \
+        '#!/usr/bin/env bash' \
+        'set -e' \
+        'unset ROS_DISTRO ROS_VERSION ROS_PYTHON_VERSION || true' \
+        'source /opt/ros/noetic/setup.bash' \
+        'case "${1:-}" in' \
+        '  roscore|rosmaster|rosbag|roslaunch|rosrun|rosnode|rostopic|rosservice|rosparam|rosmsg|rossrv|roswtf)' \
+        '    exec "$@"' \
+        '    ;;' \
+        'esac' \
+        'unset ROS_DISTRO ROS_VERSION ROS_PYTHON_VERSION || true' \
+        'source /opt/ros/jazzy/setup.bash' \
+        'source /bridge_ws/install/local_setup.bash' \
+        'exec "$@"' \
+        > /ros1_bridge_entrypoint.sh \
+    && chmod 0755 /ros1_bridge_entrypoint.sh
+
+WORKDIR /bridge_ws
+ENTRYPOINT ["/ros1_bridge_entrypoint.sh"]
+
+# Advertise all compatible ROS 1 topics into ROS 2 immediately. Without this
+# flag, dynamic_bridge waits for a ROS 2 subscriber, so ROS 1-only topics do
+# not appear in `ros2 topic list` until something subscribes to them by name.
+CMD ["ros2", "run", "ros1_bridge", "dynamic_bridge", "--bridge-all-1to2-topics"]

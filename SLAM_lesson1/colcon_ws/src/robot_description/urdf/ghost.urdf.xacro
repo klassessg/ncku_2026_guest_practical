@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!-- Reduced URDF for KLASS Ghost Vision60 robot dataset -->
+
+<robot name="ghost" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:property name="PI" value="3.1415926535897931" />
+
+  <link name="base_link" />
+
+  <link name="imu_link" />
+  <joint name="base_imu_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="imu_link" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+
+  <link name="velodyne" />
+  <joint name="imu_velodyne_joint" type="fixed">
+    <parent link="imu_link" />
+    <child link="velodyne" />
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+  </joint>
+
+</robot>

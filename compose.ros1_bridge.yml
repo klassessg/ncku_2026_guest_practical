@@ -1,0 +1,13 @@
+services:
+  klass_ros1_bridge:
+    profiles:
+      - bridge
+    build:
+      context: .
+      dockerfile: Dockerfile.ros1_bridge
+    image: klass_ros1_bridge
+    container_name: klass_ros1_bridge
+    network_mode: host
+    environment:
+      ROS_MASTER_URI: ${ROS_MASTER_URI:-http://127.0.0.1:11311}
+      RMW_IMPLEMENTATION: rmw_zenoh_cpp

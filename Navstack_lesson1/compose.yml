@@ -1,0 +1,38 @@
+services:
+  zenoh_router:
+    image: klass_navstack_lesson1
+    container_name: zenoh_router_navstack
+    command: ros2 run rmw_zenoh_cpp rmw_zenohd
+    network_mode: host
+    environment:
+      RMW_IMPLEMENTATION: rmw_zenoh_cpp
+
+  klass_navstack_lesson1:
+    image: klass_navstack_lesson1
+    container_name: klass_navstack_lesson1
+    volumes:
+      - ./colcon_ws/src:/workspace/lesson/src
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ${XAUTHORITY}:/root/.Xauthority:ro
+      - ./gazebo_resources:/workspace/lesson/gazebo_resources
+    # Intel/AMD: hardware OpenGL for gz sim GUI (avoid llvmpipe over X11 only).
+    devices:
+      - /dev/dri:/dev/dri
+    # Host GIDs for /dev/dri (video/render). Override if your machine differs:
+    #   stat -c '%g' /dev/dri/renderD128 /dev/dri/card1
+    group_add:
+      - "${RENDER_GID:-110}"
+      - "${VIDEO_GID:-44}"
+    stdin_open: true
+    tty: true
+    network_mode: host
+    ipc: host
+    depends_on:
+      - zenoh_router
+    environment:
+      RMW_IMPLEMENTATION: rmw_zenoh_cpp
+      GZ_SIM_RESOURCE_PATH: /workspace/lesson/gazebo_resources/worlds/small_house:/workspace/lesson/gazebo_resources/worlds/small_house/models:/workspace/lesson/gazebo_resources/robots
+      # Environment variables needed to use GUI inside the container
+      DISPLAY: ${DISPLAY}
+      QT_X11_NO_MITSHM: "1"
+      XAUTHORITY: /root/.Xauthority

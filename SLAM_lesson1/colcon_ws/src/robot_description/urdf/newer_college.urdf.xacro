@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!-- Newer College dataset (Ouster OS0-128 + Alphasense IMU) -->
+
+<robot name="newer_college" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:property name="PI" value="3.1415926535897931" />
+
+  <link name="base_link" />
+
+  <!-- os_sensor_to_base: T_base_os-sensor -->
+  <link name="os_sensor" />
+  <joint name="os_sensor_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="os_sensor" />
+    <origin xyz="0.001 0.000 0.091" rpy="0 0 0" />
+  </joint>
+
+  <!-- os_sensor_to_os_imu: T_imu_sensor -->
+  <link name="os_imu" />
+  <joint name="os_imu_joint" type="fixed">
+    <parent link="os_sensor" />
+    <child link="os_imu" />
+    <origin xyz="0.014 -0.012 -0.015" rpy="0 0 0" />
+  </joint>
+
+  <!-- os_imu_to_as_imu: T_as-imu_os-imu -->
+  <link name="as_imu" />
+  <joint name="as_imu_joint" type="fixed">
+    <parent link="os_imu" />
+    <child link="as_imu" />
+    <origin xyz="-0.051 -0.021 -0.041" rpy="${PI} 0 0" />
+  </joint>
+
+</robot>

@@ -1,0 +1,89 @@
+/**:
+  ros__parameters:
+
+    # Topics
+    pointCloudTopic: "/points"
+    imuTopic: "/imu"
+    odomTopic: "odometry/imu"
+    gpsTopic: "odometry/gpsz"
+
+    lidarFrame: "lidar_link"
+    baselinkFrame: "base_link"
+    odometryFrame: "odom"
+    mapFrame: "map"
+
+    # GPS Settings
+    useImuHeadingInitialization: false
+    useGpsElevation: false
+    gpsCovThreshold: 2.0
+    poseCovThreshold: 25.0
+
+    # Export settings
+    savePCD: false
+    savePCDDirectory: "/tmp/lio_sam_maps/"
+
+    # Lidar Settings
+    sensor: velodyne
+    N_SCAN: 16
+    Horizon_SCAN: 720
+    downsampleRate: 1
+    lidarMinRange: 0.12
+    lidarMaxRange: 10.0
+
+    # IMU Settings
+    imuType: 1                                   # 0 = 6-axis (no magnetometer), 1 = 9-axis
+    imuAccNoise: 0.017
+    imuGyrNoise: 0.0002
+    imuAccBiasN: 0.0002
+    imuGyrBiasN: 0.0002
+    imuPriorBiasNoise: 1.0e-3
+    imuInitialBias: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    imuGravity: 9.8
+    imuRPYWeight: 0.01
+
+    adaptiveImuEnabled: false
+    adaptiveImuVarianceWindowSize: 15
+    adaptiveImuBaselineAlpha: 0.01
+    adaptiveImuBaselineOutlierRatio: 4.0
+    adaptiveImuMinimumWeight: 0.05
+
+    # Lidar (lidar_link) w.r.t. IMU (imu_link): same x/y on base_link, imu 0.103 m below lidar
+    extrinsicTrans: [0.0, 0.0, -0.103]
+    extrinsicRot: [1.0, 0.0, 0.0,
+                   0.0, 1.0, 0.0,
+                   0.0, 0.0, 1.0]
+    extrinsicRPY: [1.0, 0.0, 0.0,
+                   0.0, 1.0, 0.0,
+                   0.0, 0.0, 1.0]
+
+    edgeThreshold: 1.0
+    surfThreshold: 0.1
+    edgeFeatureMinValidNum: 10
+    surfFeatureMinValidNum: 100
+
+    odometrySurfLeafSize: 0.2
+    mappingCornerLeafSize: 0.1
+    mappingSurfLeafSize: 0.2
+
+    z_tollerance: 1000.0
+    rotation_tollerance: 1000.0
+
+    numberOfCores: 4
+    mappingProcessInterval: 0.15
+
+    surroundingkeyframeAddingDistThreshold: 1.0
+    surroundingkeyframeAddingAngleThreshold: 0.2
+    surroundingKeyframeDensity: 2.0
+    surroundingKeyframeSearchRadius: 50.0
+
+    loopClosureEnableFlag: false
+    loopClosureFrequency: 1.0
+    surroundingKeyframeSize: 50
+    historyKeyframeSearchRadius: 15.0
+    historyKeyframeSearchTimeDiff: 30.0
+    historyKeyframeSearchNum: 25
+    historyKeyframeFitnessScore: 0.3
+
+    globalMapVisualizationSearchRadius: 1000.0
+    globalMapVisualizationPoseDensity: 10.0
+    globalMapVisualizationLeafSize: 1.0

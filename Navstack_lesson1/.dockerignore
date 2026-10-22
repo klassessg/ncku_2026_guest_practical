@@ -1,0 +1,6 @@
+# Ignore build artefacts
+colcon_ws
+!colcon_ws/src
+
+# Ignore gazebo assets
+gazebo_resources

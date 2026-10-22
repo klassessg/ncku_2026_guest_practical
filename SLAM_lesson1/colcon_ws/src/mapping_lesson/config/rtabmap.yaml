@@ -1,0 +1,84 @@
+# Hand-tuned parameters used by the lesson.
+#
+# For the all parameters, see rtabmap_all_params.yaml in this directory.
+
+/rtabmap/icp_odometry:
+  ros__parameters:
+    log_to_rosout_level: 1
+    # ROS interface parameters. Topic names are remapped by rtabmap.launch.py.
+    frame_id: base_link
+    odom_frame_id: odom
+    publish_tf: true
+    wait_for_transform: 0.2
+    wait_imu_to_init: true
+    expected_update_rate: 15.0
+    qos: 1
+
+    scan_cloud_max_points: 15000
+    scan_voxel_size: 0.1
+    scan_normal_k: 20
+    "Icp/Strategy": "1"
+    "Icp/PointToPlane": "true"
+    "Icp/Iterations": "10"
+    "Icp/VoxelSize": "0.1"
+    "Icp/Epsilon": "0.001"
+    "Icp/PointToPlaneK": "20"
+    "Icp/PointToPlaneRadius": "0"
+    "Icp/MaxTranslation": "3"
+    "Icp/MaxCorrespondenceDistance": "1.0"
+    "Icp/OutlierRatio": "0.7"
+    "Icp/CorrespondenceRatio": "0.01"
+    "Odom/ScanKeyFrameThr": "0.4"
+    "OdomF2M/ScanSubtractRadius": "0.1"
+    "OdomF2M/ScanMaxSize": "15000"
+    "OdomF2M/BundleAdjustment": "false"
+
+/rtabmap/rtabmap:
+  ros__parameters:
+    database_path: /workspace/lesson/maps/rtabmap.db
+    log_to_rosout_level: 1
+    frame_id: base_link
+    map_frame_id: map
+    odom_frame_id: odom
+    publish_tf: true
+    subscribe_depth: false
+    subscribe_rgb: false
+    subscribe_scan: false
+    subscribe_scan_cloud: true
+    subscribe_odom_info: true
+    approx_sync: false
+    odom_sensor_sync: true
+    wait_for_transform: 0.2
+    qos: 1
+
+    # Lidar-only graph SLAM and loop closure.
+    "Reg/Strategy": "1"
+    "RGBD/ProximityPathFilteringRadius": "10.0"
+    "RGBD/ProximityAngle": "0.0"
+    "RGBD/ProximityMaxGraphDepth": "0"
+    "RGBD/ProximityPathMaxNeighbors": "1"
+    "RGBD/AngularUpdate": "0.05"
+    "RGBD/LinearUpdate": "0.05"
+    "RGBD/CreateOccupancyGrid": "false"
+    "Mem/NotLinkedNodesKept": "false"
+    "Mem/STMSize": "30"
+    "Icp/Strategy": "1"
+    "Icp/PointToPlane": "true"
+    "Icp/VoxelSize": "0.1"
+    "Icp/MaxCorrespondenceDistance": "1.0"
+    "Icp/CorrespondenceRatio": "0.2"
+    "Icp/ReciprocalCorrespondences": "true"
+
+/rtabmap/rtabmap_viz:
+  ros__parameters:
+    frame_id: base_link
+    odom_frame_id: odom
+    subscribe_depth: false
+    subscribe_rgb: false
+    subscribe_scan: false
+    subscribe_scan_cloud: true
+    subscribe_odom_info: true
+    approx_sync: false
+    wait_for_transform: 0.2
+    qos: 1
+    odometry_node_name: icp_odometry

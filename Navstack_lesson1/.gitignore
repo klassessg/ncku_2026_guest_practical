@@ -1,0 +1,19 @@
+# Ignore colcon build artefacts
+colcon_ws/*
+!colcon_ws/src
+
+# VSCode configurations
+.vscode/
+*.code-workspace
+
+# Ignore Docker build outputs if any appear
+build/
+dist/
+*.egg-info/
+
+# Ignore Python cache if present
+__pycache__/
+*.pyc
+
+gazebo_resources
+

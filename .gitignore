@@ -1,0 +1,13 @@
+
+# VSCode configurations
+.vscode/
+*.code-workspace
+
+# Build artifacts
+venv
+
+# Bag files
+bag_files
+
+# AI agent files
+.cursor/
