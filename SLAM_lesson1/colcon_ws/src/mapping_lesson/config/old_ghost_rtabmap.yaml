@@ -79,8 +79,9 @@
     "Icp/Strategy": "1"
     "Icp/PointToPlane": "true"
     "Icp/VoxelSize": "0.2"
-    "Icp/MaxCorrespondenceDistance": "3.0"
-    "Icp/CorrespondenceRatio": "0.2"
+    "Icp/MaxCorrespondenceDistance": "2.0"
+    "Icp/CorrespondenceRatio": "0.15"
+    "Icp/PointToPlaneMinComplexity": "0.1"   # Handle long corridor
     "Icp/ReciprocalCorrespondences": "false"
     "Icp/Force4DoF": "true"
     "Icp/MaxTranslation": "3.0"

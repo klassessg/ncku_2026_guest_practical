@@ -14,11 +14,14 @@
 
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
+  <exec_depend>lifecycle_msgs</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
   <exec_depend>lio_sam</exec_depend>
   <exec_depend>imu_filter_madgwick</exec_depend>
   <exec_depend>rtabmap_odom</exec_depend>
   <exec_depend>rtabmap_slam</exec_depend>
   <exec_depend>rtabmap_viz</exec_depend>
+  <exec_depend>slam_toolbox</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
   <exec_depend>robot_description</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>

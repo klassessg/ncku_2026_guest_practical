@@ -12,7 +12,7 @@ from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
-    pkg_dir = get_package_share_directory("nav_bringup")
+    pkg_dir = get_package_share_directory("nav_lesson")
     ros_gz_sim_dir = get_package_share_directory("ros_gz_sim")
     gazebo_resources_dir = os.path.abspath(
         os.path.join(

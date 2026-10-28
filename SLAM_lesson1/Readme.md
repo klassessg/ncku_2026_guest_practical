@@ -82,16 +82,12 @@ ros2 launch mapping_lesson newer_college.launch.py use_sim_time:=True
 
 This loads the configuration specific to the dataset and runs the mapper.
 
-In another terminal, play the bag. This command selects only the Ouster
-point-cloud and IMU topics, applies the QoS overrides required by this converted
-bag, publishes the bag clock, and starts playback paused:
+In another terminal, play the bag using the command:
 
 ```bash
 ros2 bag play /workspace/lesson/bag_files/2021-07-01-10-37-38-quad-easy \
   --clock \
-  --start-paused \
-  --qos-profile-overrides-path /workspace/lesson/src/mapping_lesson/config/newer_college_bag_qos.yaml \
-  --topics /os_cloud_node/points /os_cloud_node/imu
+  --start-paused
 ```
 
 Press `Space` when the mapper is ready to start playback. Stop playback with
@@ -161,16 +157,12 @@ Run the mapper:
 ros2 launch mapping_lesson newer_college_rtabmap.launch.py use_sim_time:=True
 ```
 
-In another terminal, play the bag. This command selects only the Ouster
-point-cloud and IMU topics, applies the QoS overrides required by this converted
-bag, publishes the bag clock, and starts playback paused:
+In another terminal, play the bag using the command:
 
 ```bash
 ros2 bag play /workspace/lesson/bag_files/2021-07-01-10-37-38-quad-easy \
   --clock \
-  --start-paused \
-  --qos-profile-overrides-path /workspace/lesson/src/mapping_lesson/config/newer_college_bag_qos.yaml \
-  --topics /os_cloud_node/points /os_cloud_node/imu
+  --start-paused
 ```
 
 Press `Space` when the mapper is ready to start playback. Stop playback with
@@ -239,6 +231,12 @@ ros2 launch mapping_lesson newer_college_rtabmap.launch.py use_sim_time:=True us
 ```
 
 Use `macpherson_ghost_rtabmap.launch.py` instead for the Ghost dataset.
+
+## 2D LiDAR mapping with PuppyPi
+
+For 2D LiDAR mapping on the PuppyPi, follow the dedicated
+[PuppyPi mapping guide](colcon_ws/src/mapping_lesson/README.md). It covers the operation on a live robot, map saving, and common
+TF/timing problems.
 
 ## Closing remarks
 Before a robot can navigate within a new environment, it first needs to estimate where it is—i.e., its pose in the environment. In modern robotics, this is typically accomplished via SLAM (Simultaneous Localization and Mapping), where the robot estimates both its pose and maps the environment at the same time. This is not an easy task for robots, because there are dependencies between the robot's estimation of its current pose and the map it creates. If there are errors in the pose estimate, then the map will also contain errors. This is commonly known as map drift. Without a robust algorithm to correct for drift, the robot will eventually be unable to localize itself.

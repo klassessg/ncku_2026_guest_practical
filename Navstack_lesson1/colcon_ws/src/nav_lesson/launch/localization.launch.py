@@ -8,7 +8,7 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    pkg_dir = get_package_share_directory("nav_bringup")
+    pkg_dir = get_package_share_directory("nav_lesson")
     params_file = LaunchConfiguration("params_file")
     map_path = LaunchConfiguration("pcd_path")
     map_yaml = LaunchConfiguration("map")

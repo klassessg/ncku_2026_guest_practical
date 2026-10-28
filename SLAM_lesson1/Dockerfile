@@ -20,6 +20,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # IF you want to use different SLAM algorithm, you can add them here to have it built into 
 # the docker image
+
+# Install SLAM Toolbox and map server for saving maps
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        ros-${ROS_DISTRO}-slam-toolbox \
+        ros-${ROS_DISTRO}-nav2-map-server \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install open source SLAM algorithm
 RUN apt-get update && apt-get install -y --no-install-recommends \
         ros-${ROS_DISTRO}-perception-pcl \

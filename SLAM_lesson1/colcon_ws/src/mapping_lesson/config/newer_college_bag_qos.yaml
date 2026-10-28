@@ -1,8 +1,0 @@
-/os_cloud_node/imu:
-  reliability: best_effort
-  history: keep_last
-  depth: 2000
-/os_cloud_node/points:
-  reliability: best_effort
-  history: keep_last
-  depth: 5
