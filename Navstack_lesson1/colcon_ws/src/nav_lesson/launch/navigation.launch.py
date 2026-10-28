@@ -25,7 +25,7 @@ AUTOSTART = True
 
 
 def generate_launch_description():
-    pkg_dir = get_package_share_directory("nav_bringup")
+    pkg_dir = get_package_share_directory("nav_lesson")
 
     use_sim_time = LaunchConfiguration("use_sim_time")
     params_file = LaunchConfiguration("params_file")

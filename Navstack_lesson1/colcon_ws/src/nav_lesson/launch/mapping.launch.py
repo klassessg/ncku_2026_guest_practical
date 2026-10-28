@@ -9,7 +9,7 @@ from launch.conditions import IfCondition
 
 
 def generate_launch_description():
-    pkg_dir = get_package_share_directory("nav_bringup")
+    pkg_dir = get_package_share_directory("nav_lesson")
     parameter_file = LaunchConfiguration("params_file")
     use_sim_time = LaunchConfiguration("use_sim_time")
     launch_rviz = LaunchConfiguration("launch_rviz")

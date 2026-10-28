@@ -79,7 +79,7 @@ RUN ln -s /workspace/lesson/src /workspace/lesson/colcon_ws/src
 RUN bash -c ". /opt/ros/${ROS_DISTRO}/setup.bash \
     && cd /workspace/lesson/colcon_ws \
     && export CMAKE_BUILD_PARALLEL_LEVEL=1 MAKEFLAGS=-j1 \
-    && colcon build --parallel-workers 1"
+    && colcon build --parallel-workers 1 --cmake-args -DBUILD_TESTING=OFF"
 COPY ./env.sh /workspace/lesson/env.sh
 
 RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> /root/.bashrc

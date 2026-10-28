@@ -3,7 +3,7 @@ from os.path import join
 
 from setuptools import setup
 
-package_name = "nav_bringup"
+package_name = "nav_lesson"
 
 def _map_files() -> list[str]:
     patterns = ("*.pcd", "*.pgm", "*.yaml")

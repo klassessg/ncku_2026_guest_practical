@@ -7,6 +7,16 @@ services:
     environment:
       RMW_IMPLEMENTATION: rmw_zenoh_cpp
 
+  # Launch foxglove bridge so that visualization can be done through foxglove
+  foxglove_bridge:
+    image: klass_navstack_lesson1
+    container_name: foxglove_bridge_navstack
+    command: ros2 launch foxglove_bridge foxglove_bridge_launch.xml
+    network_mode: host
+    ipc: host
+    environment:
+      RMW_IMPLEMENTATION: rmw_zenoh_cpp
+
   klass_navstack_lesson1:
     image: klass_navstack_lesson1
     container_name: klass_navstack_lesson1

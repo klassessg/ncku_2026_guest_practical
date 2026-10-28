@@ -58,7 +58,7 @@ If you change files under `colcon_ws/src`, rebuild the lesson package inside the
 cd /workspace/lesson/colcon_ws
 # --parallel-workers is set to 2, so that the build doesn't crash weaker machines. Increase/decrease this
 # as needed for your machine
-colcon build --packages-select nav_bringup --parallel-workers 2
+colcon build --packages-select nav_lesson --parallel-workers 2
 source install/setup.bash
 ```
 
@@ -71,13 +71,13 @@ The world is based on the open-source [Gazebo worlds dataset](https://github.com
 Headless (server only, no Gazebo GUI):
 
 ```bash
-ros2 launch nav_bringup sim.launch.py gui:=false
+ros2 launch nav_lesson sim.launch.py gui:=false
 ```
 
 With Gazebo GUI (default):
 
 ```bash
-ros2 launch nav_bringup sim.launch.py
+ros2 launch nav_lesson sim.launch.py
 ```
 
 To open the Gazebo GUI later while the server from `sim.launch.py` is already running:
@@ -89,7 +89,7 @@ gz sim -g
 Optional: use the full `small_house` world instead of the simplified default:
 
 ```bash
-ros2 launch nav_bringup sim.launch.py world_path:=/workspace/lesson/gazebo_resources/worlds/small_house/small_house.world
+ros2 launch nav_lesson sim.launch.py world_path:=/workspace/lesson/gazebo_resources/worlds/small_house/small_house.world
 ```
 
 ### Launch localization
@@ -105,7 +105,7 @@ While the simulation is still running:
 The following command launches the localization stack and map server. This helps with the estimation of the robot's current position.
 
 ```bash
-ros2 launch nav_bringup localization.launch.py use_sim_time:=true
+ros2 launch nav_lesson localization.launch.py use_sim_time:=true
 ```
 
 Set the robot pose once using either Foxglove or RViz2 (**2D Pose Estimate**, fixed frame `map`).
@@ -113,7 +113,7 @@ Set the robot pose once using either Foxglove or RViz2 (**2D Pose Estimate**, fi
 If you want to use a custom map, override the map file if needed:
 
 ```bash
-ros2 launch nav_bringup localization.launch.py use_sim_time:=true pcd_path:=/path/to/your/map.pcd
+ros2 launch nav_lesson localization.launch.py use_sim_time:=true pcd_path:=/path/to/your/map.pcd
 ```
 
 ### Launch navigation
@@ -123,10 +123,10 @@ ros2 launch nav_bringup localization.launch.py use_sim_time:=true pcd_path:=/pat
 Run the navigation stack. 
 
 ```bash
-ros2 launch nav_bringup navigation.launch.py use_sim_time:=true
+ros2 launch nav_lesson navigation.launch.py use_sim_time:=true
 ```
 
-Send navigation goals via RViz (Nav2 goal tool) or Foxglove publisher. The default 2D occupancy map to be loaded for this lesson is bundled under `nav_bringup/maps/small_house/`; adjust the `map` launch argument if you use a different YAML.
+Send navigation goals via RViz (Nav2 goal tool) or Foxglove publisher. The default 2D occupancy map to be loaded for this lesson is bundled under `nav_lesson/maps/small_house/`; adjust the `map` launch argument if you use a different YAML.
 
 
 ## Exercises
@@ -182,13 +182,13 @@ For this exercise, you'll use Foxglove to visualize how MPPI control works.
 4. **Obstacle avoidance**
    - Using the Gazebo simulator GUI, add an obstacle to the environment. Because this obstacle is added during runtime, it will not appear in the pointcloud map.
    - Observe the trajectories. How do they adapt when the new obstacle is present?
-   - Next, open the `navigation.yaml` file in `colcon_ws/src/nav_bringup/config/navigation.yaml`. Locate the `global_costmap.obstacle_layer` section and set `enabled` to `False`. Then rebuild the package by running the following from the `colcon_ws` directory:
+   - Next, open the `navigation.yaml` file in `colcon_ws/src/nav_lesson/config/navigation.yaml`. Locate the `global_costmap.obstacle_layer` section and set `enabled` to `False`. Then rebuild the package by running the following from the `colcon_ws` directory:
      ```bash
-     colcon build --packages-select nav_bringup
+     colcon build --packages-select nav_lesson
      ```
      Or, for quicker updates when editing Python or config files, run:
      ```bash
-     colcon build --packages-select nav_bringup --symlink-install
+     colcon build --packages-select nav_lesson --symlink-install
      ```
    - After making this change, examine how the path published on **`/plan`** changes when you send a new goal. Does the path still avoid the added obstacle? Observe how the robot behaves in relation to this obstacle now that the global planner is not considering it.
 
@@ -215,20 +215,20 @@ Additional concepts not covered in these exercises include how to handle the dyn
 With simulation running in terminal 1, start mapping in a second terminal:
 
 ```bash
-ros2 launch nav_bringup mapping.launch.py use_sim_time:=true
+ros2 launch nav_lesson mapping.launch.py use_sim_time:=true
 ```
-Drive the robot in simulation to explore the environment. Parameters are in `colcon_ws/src/nav_bringup/config/mapping.yaml`. When map saving is enabled in that file, LIO-SAM can write PCD maps under `/tmp/lio_sam_maps/`, or you can call the `lio_sam/save_map` service while `lio_sam_mapOptimization` is running.
+Drive the robot in simulation to explore the environment. Parameters are in `colcon_ws/src/nav_lesson/config/mapping.yaml`. When map saving is enabled in that file, LIO-SAM can write PCD maps under `/tmp/lio_sam_maps/`, or you can call the `lio_sam/save_map` service while `lio_sam_mapOptimization` is running.
 
 Here's an example command that will save the output under `/tmp/lio_sam_maps`.
 ```bash
 ros2 service call /lio_sam/save_map lio_sam/srv/SaveMap "{resolution: 0.0, destination: '/tmp/lio_sam_maps/'}"
 ```
-For example, to use it, copy the `GlobalMap.pcd` into `colcon_ws/src/nav_bringup/maps/small_house/map.pcd` for the small house example.
+For example, to use it, copy the `GlobalMap.pcd` into `colcon_ws/src/nav_lesson/maps/small_house/map.pcd` for the small house example.
 
-After you save a 3D point cloud map, generate the 2D pair that Nav2 and `map_server` use: `map.pgm` plus `map.yaml`. Run the conversion from the `nav_bringup` package root.
+After you save a 3D point cloud map, generate the 2D pair that Nav2 and `map_server` use: `map.pgm` plus `map.yaml`. Run the conversion from the `nav_lesson` package root.
 
 ```bash
-cd /workspace/lesson/colcon_ws/src/nav_bringup
+cd /workspace/lesson/colcon_ws/src/nav_lesson
 ./scripts/pcd_to_nav2_map.py maps/small_house/map.pcd \
   --z-min 0.0 --z-max 1.0 --resolution 0.05 --mark-free \
   --nav2-map-dir maps/small_house
@@ -236,8 +236,8 @@ cd /workspace/lesson/colcon_ws/src/nav_bringup
 
 The script keeps points with height in `[z-min, z-max]` (meters, map frame), rasterizes them at `--resolution` (meters per pixel), and writes both files into `--nav2-map-dir`. The example uses a 0.0–1.0 m slice; tune the band so walls and obstacles appear in the grid. You would want to configure this roughly based on your robot's size plus some tolerance. Add `--mark-free` so open cells are marked traversable instead of unknown.
 
-If you generate new maps, shift (move) them into `/workspace/lesson/colcon_ws/src/nav_bringup/maps`.
-Then, rebuild `nav_bringup` and re-source the workspace if you want to use them.
+If you generate new maps, shift (move) them into `/workspace/lesson/colcon_ws/src/nav_lesson/maps`.
+Then, rebuild `nav_lesson` and re-source the workspace if you want to use them.
 ```bash
-colcon build --packages-select nav_bringup && source install/setup.bash
+colcon build --packages-select nav_lesson && source install/setup.bash
 ```
